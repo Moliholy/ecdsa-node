@@ -1,5 +1,6 @@
 import { useState } from "react";
 import server from "./server";
+import {Buffer} from 'buffer';
 
 function Transfer({ address, setBalance }) {
   const [sendAmount, setSendAmount] = useState("");
@@ -11,12 +12,24 @@ function Transfer({ address, setBalance }) {
     evt.preventDefault();
 
     try {
-      const {
-        data: { balance },
-      } = await server.post(`send`, {
+      const {data: {sendRequest}} = await server.post('request', {
         sender: address,
         amount: parseInt(sendAmount),
         recipient,
+      });
+      await ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+      const msgHex = Buffer.from(sendRequest.message, 'utf8').toString('hex');
+      const signature = await ethereum.request({
+        method: 'personal_sign',
+        params: [`0x${msgHex}`, address]
+      });
+      const {
+        data: { balance },
+      } = await server.post(`send`, {
+        requestId: sendRequest.id,
+        signature
       });
       setBalance(balance);
     } catch (ex) {

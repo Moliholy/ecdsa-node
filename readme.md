@@ -4,6 +4,23 @@ This project is an example of using a client and server to facilitate transfers 
 
 However, something that we would like to incoporate is Public Key Cryptography. By using Elliptic Curve Digital Signatures we can make it so the server only allows transfers that have been signed for by the person who owns the associated address.
 
+## Instructions
+
+Add a `.env` file like the following:
+
+```
+ADDRESS="<YOUR-METAMASK-ADDRESS>"
+```
+
+When running the frontend you will be required to have metamask enabled and you will be asked to grant permission to your addresses.
+Once granted, you will be prompted to sign a message that the server created for a particular operation. If successfully signed,
+the frontend will deliver to the backend the operation ID along with the signature.
+
+The backend will then check the message hash is correct and that it was signed by the correct address as well, hence allowing
+the funds transfer.
+
+In order to achieve this a new endpoint has been added to the backend: `/request`.
+
 ### Video instructions
 For an overview of this project as well as getting started instructions, check out the following video:
 
